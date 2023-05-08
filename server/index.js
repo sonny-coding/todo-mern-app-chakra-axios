@@ -3,16 +3,18 @@ import * as dotenv from "dotenv";
 import cors from "cors";
 import connectDB from "./mongodb/connectDB.js";
 import Todo from "./mongodb/models/Todo.js";
+// import Todo from "./mongodb/models/todo.js";
 const PORT = 8080;
 
 // setup dotenv
 dotenv.config();
 // console.log(process.env.SECRET);
 
-// setup express
+// setup express and middleware
 const app = express();
 app.use(cors());
 app.use(express.json({ limit: "50mb" }));
+
 // health check route
 app.get("/hello", async (req, res) => {
   try {
@@ -29,7 +31,7 @@ app.get("/hello", async (req, res) => {
 });
 
 // get all todos
-app.get("/api/todos", async (req, res) => {
+app.get("/api/todos", async (_, res) => {
   try {
     const todos = await Todo.find({});
     res.status(200).json({
@@ -44,13 +46,10 @@ app.get("/api/todos", async (req, res) => {
   }
 });
 
-// create todo
+// create a todo
 app.post("/api/create-todo", async (req, res) => {
   try {
-    console.log("hello this is try block");
     const { task } = req.body;
-    console.log("🚀 ~ file: index.js:48 ~ app.post ~ task:", task);
-
     const newTodo = await Todo.create({
       task,
       finished: false,
@@ -62,6 +61,53 @@ app.post("/api/create-todo", async (req, res) => {
   } catch (error) {
     res.status(500).json({
       success: false,
+      message: error,
+    });
+  }
+});
+// delete a todo
+app.delete("/api/delete-todo", async (req, res) => {
+  try {
+    const { id } = req.body;
+    const deleteTodo = await Todo.findByIdAndDelete(id);
+    if (!deleteTodo) {
+      res.status(404).json({
+        sucess: false,
+        message: "Item not found",
+      });
+    }
+    res.status(200).json({
+      sucess: true,
+      data: deleteTodo,
+    });
+  } catch (error) {
+    res.status(500).json({
+      sucess: false,
+      message: error,
+    });
+  }
+});
+// update a todo
+app.patch("/api/update-todo", async (req, res) => {
+  try {
+    const { id, isDone } = req.body;
+    const updatedTodo = await Todo.findByIdAndUpdate(
+      { _id: id },
+      { finished: isDone }
+    );
+    if (!updatedTodo) {
+      res.status(404).json({
+        sucess: false,
+        message: "item not found",
+      });
+    }
+    res.status(200).json({
+      sucess: true,
+      data: updatedTodo,
+    });
+  } catch (error) {
+    res.status(500).json({
+      sucess: false,
       message: error,
     });
   }
