@@ -11,7 +11,6 @@ import {
 
 const Todo = ({ task, finished, _id, setRefresh }) => {
   const handleOnChange = async () => {
-    // alert("onChange");
     try {
       const newFinished = !finished;
       const response = await axios.patch(
@@ -29,11 +28,16 @@ const Todo = ({ task, finished, _id, setRefresh }) => {
     }
   };
   const handleOnClick = async () => {
-    alert("onClick");
+    // the 2nd param to axios.delete() is the oxios option, not the request body. To send a request body with a DELETE request, use the data option
     try {
-      const response = axios.delete("http://localhost:8080/api/delete-todo", {
-        id: _id,
-      });
+      const response = await axios.delete(
+        "http://localhost:8080/api/delete-todo",
+        {
+          data: {
+            _id: _id,
+          },
+        }
+      );
       if (response.statusText === "OK") {
         setRefresh(true);
       }

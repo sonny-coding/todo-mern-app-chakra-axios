@@ -68,9 +68,8 @@ app.post("/api/create-todo", async (req, res) => {
 // delete a todo
 app.delete("/api/delete-todo", async (req, res) => {
   try {
-    const { id } = req.body;
-    console.log("🚀 ~ file: index.js:72 ~ app.delete ~ _id:", id);
-    const deleteTodo = await Todo.findByIdAndDelete(id);
+    const { _id } = req.body;
+    const deleteTodo = await Todo.findByIdAndDelete(_id);
     if (!deleteTodo) {
       res.status(404).json({
         sucess: false,
