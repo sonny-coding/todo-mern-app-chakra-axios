@@ -69,6 +69,7 @@ app.post("/api/create-todo", async (req, res) => {
 app.delete("/api/delete-todo", async (req, res) => {
   try {
     const { id } = req.body;
+    console.log("🚀 ~ file: index.js:72 ~ app.delete ~ _id:", id);
     const deleteTodo = await Todo.findByIdAndDelete(id);
     if (!deleteTodo) {
       res.status(404).json({
@@ -90,10 +91,10 @@ app.delete("/api/delete-todo", async (req, res) => {
 // update a todo
 app.patch("/api/update-todo", async (req, res) => {
   try {
-    const { id, isDone } = req.body;
+    const { _id, newFinished } = req.body;
     const updatedTodo = await Todo.findByIdAndUpdate(
-      { _id: id },
-      { finished: isDone }
+      { _id: _id },
+      { finished: newFinished }
     );
     if (!updatedTodo) {
       res.status(404).json({

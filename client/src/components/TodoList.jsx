@@ -1,12 +1,18 @@
 import React from "react";
 import Todo from "./Todo";
-
-const TodoList = () => {
+import { List } from "@chakra-ui/react";
+const TodoList = ({ todoList, setRefresh }) => {
   return (
-    <div>
-      TodoList
-      <Todo />
-    </div>
+    <List>
+      {todoList.map((todo) => (
+        <Todo
+          task={todo.task}
+          finished={todo.finished}
+          _id={todo._id}
+          setRefresh={setRefresh}
+        />
+      ))}
+    </List>
   );
 };
 
